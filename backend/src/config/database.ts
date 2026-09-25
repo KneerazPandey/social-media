@@ -15,7 +15,7 @@ export default class Database {
         const databaseUri = Env.DATABASE_URI;
 
         if (!databaseUri) {
-            throw new DatabaseConnectionError('Database Uri is not defined');
+            throw new DatabaseConnectionError();
         }
 
         try {

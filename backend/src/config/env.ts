@@ -8,13 +8,15 @@ dotenv.config();
 class Env {
     public static DEBUG = process.env.DEBUG || 'development'
 
-    public static PORT = process.env.PORT || 3000;
+    public static PORT: number = parseInt(process.env.PORT || '3000');
 
-    public static DATABASE_URI = Env.fetchEnv('DATABASE_URI');
+    public static DATABASE_URI: string = Env.fetchEnv('DATABASE_URI');
 
-    public static SECRET_KEY = Env.fetchEnv('SECRET_KEY');
+    public static SECRET_KEY: string = Env.fetchEnv('SECRET_KEY');
 
-    public JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '15m'
+    public static JWT_EXPIRES_IN: number = parseInt(process.env.JWT_EXPIRES_IN || '1500');
+
+    public static CORS_ORIGIN: string = Env.fetchEnv('CORS_ORIGIN');
 
 
     private static fetchEnv(name: string): string {
