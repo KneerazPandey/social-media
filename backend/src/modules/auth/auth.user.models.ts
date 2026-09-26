@@ -1,5 +1,6 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import JwtToken from "../../config/jwt-token.js";
+import Env from "../../config/env.js";
 
 
 export interface IUser extends Document {
@@ -51,11 +52,11 @@ const userSchema = new Schema<IUser>({
 });
 
 userSchema.methods.generateAccessToken = async function (this: IUser): Promise<string> {
-    return await JwtToken.forUser(this);
+    return await JwtToken.forUser(this, Env.JWT_EXPIRES_IN);
 }
 
 userSchema.methods.generateRefreshToken = async function (this: IUser): Promise<string> {
-    return await JwtToken.forUser(this);
+    return await JwtToken.forUser(this, Env.JWT_REFRESH_EXPIRES_IN);
 }
 
 const User: Model<IUser> = mongoose.model('User', userSchema);

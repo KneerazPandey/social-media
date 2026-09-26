@@ -18,6 +18,8 @@ class Env {
 
     public static CORS_ORIGIN: string = Env.fetchEnv('CORS_ORIGIN');
 
+    public static JWT_REFRESH_EXPIRES_IN: number = parseInt(process.env.JWT_REFRESH_EXPIRES_IN || '30000');
+
 
     private static fetchEnv(name: string): string {
         const value = process.env[name];

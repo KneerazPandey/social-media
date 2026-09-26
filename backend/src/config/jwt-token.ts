@@ -7,13 +7,13 @@ interface AccessTokenPayload {
 }
 
 export default class JwtToken {
-    public static async forUser(user: IUser): Promise<string> {
+    public static async forUser(user: IUser, expiresIn: number = Env.JWT_EXPIRES_IN): Promise<string> {
         const payload: AccessTokenPayload = {
             userId: user._id.toString(),
         };
 
         const options: SignOptions = {
-            expiresIn: Env.JWT_EXPIRES_IN,
+            expiresIn: expiresIn,
         }
 
         return jwt.sign(
