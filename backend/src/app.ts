@@ -3,6 +3,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import Env from './config/env.js';
 import healthRoutes from './modules/health/health.router.js';
+import authRoutes from './modules/auth/auth-router.js';
+import { errorMiddleware } from './middleware/error.middleware.js';
 
 const app = express();
 
@@ -19,5 +21,8 @@ app.use(cookieParser());
 
 
 app.use('/api/health', healthRoutes);
+app.use('/api/auth', authRoutes);
+
+app.use(errorMiddleware);
 
 export default app;
