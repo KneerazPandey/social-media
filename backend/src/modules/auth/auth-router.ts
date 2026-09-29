@@ -3,6 +3,7 @@ import AuthController from './auth.controller.js';
 import { upload } from '../../middleware/upload.middleware.js';
 import validateWithZod from '../../middleware/zod-validation-middleware.js';
 import AuthValidation from './auth.validation.js';
+import authMiddleware from './auth-middleware.js';
 
 
 const authRoutes = Router();
@@ -15,5 +16,9 @@ authRoutes.post(
 );
 
 authRoutes.post('/login', AuthController.login);
+
+authRoutes.post('/logout', AuthController.logout);
+
+authRoutes.post('/refresh', AuthController.refresh);
 
 export default authRoutes;

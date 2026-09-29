@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import AuthService from "./auth.service.js";
 import { ApiResponse } from "../../core/response/api-response.js";
 import type { RegisterInput } from "./auth.types.js";
+import JwtToken from "../../config/jwt-token.js";
 
 
 export default class AuthController {
@@ -29,9 +30,33 @@ export default class AuthController {
             password: req.body.password
         });
 
-        return res.status(200).json(new ApiResponse({
-            message: 'Login Successfull',
-            data: result,
-        }));
+        return res.status(200)
+            .cookie('accessToken', result.accessToken)
+            .cookie('refreshToken', result.refreshToken)
+            .json(new ApiResponse({
+                message: 'Login Successfull',
+                data: result,
+            }));
+    }
+
+    public static async logout(req: Request, res: Response): Promise<Response> {
+        await AuthService.logout(req.body.refreshToken);
+        return res.status(200)
+            .clearCookie('refreshToken')
+            .clearCookie('accessToken')
+            .json(new ApiResponse({
+                message: 'You have been successfully logout.',
+            }));
+    }
+
+    public static async refresh(req: Request, res: Response): Promise<Response> {
+        const result = await JwtToken.refresh(req.body.refreshToken);
+        return res.status(200)
+            .cookie('accessToken', result.accessToken)
+            .cookie('refreshToken', result.refreshToken)
+            .json(new ApiResponse({
+                message: "New access and refresh token has been successfully generated",
+                data: result,
+            }));
     }
 }
