@@ -21,4 +21,13 @@ authRoutes.post('/logout', AuthController.logout);
 
 authRoutes.post('/refresh', AuthController.refresh);
 
+authRoutes.get('/profile', authMiddleware, AuthController.getCurrentUser);
+
+authRoutes.post(
+    '/change-password',
+    authMiddleware,
+    validateWithZod(AuthValidation.changeCurrentPasswordSchema),
+    AuthController.changeCurrentPassword
+);
+
 export default authRoutes;

@@ -3,6 +3,7 @@ import AuthService from "./auth.service.js";
 import { ApiResponse } from "../../core/response/api-response.js";
 import type { RegisterInput } from "./auth.types.js";
 import JwtToken from "../../config/jwt-token.js";
+import UnauthorizedError from "../../errors/unauthorize-error.js";
 
 
 export default class AuthController {
@@ -58,5 +59,34 @@ export default class AuthController {
                 message: "New access and refresh token has been successfully generated",
                 data: result,
             }));
+    }
+
+    public static async getCurrentUser(req: Request, res: Response): Promise<Response> {
+        const result = await AuthService.getCurrentuser(req.user);
+        return res.status(200).json({
+            message: 'The user details',
+            data: result,
+        });
+    }
+
+
+    public static async changeCurrentPassword(req: Request, res: Response): Promise<Response> {
+        if (!req.user) {
+            throw new UnauthorizedError('Authentication required');
+        }
+
+        const { currentPassword, newPassword } = req.body;
+
+        await AuthService.changeCurrentPassword(
+            req.user._id.toString(),
+            currentPassword,
+            newPassword,
+        );
+
+        return res.status(200).json(
+            new ApiResponse({
+                message: 'Password changed successfully',
+            }),
+        );
     }
 }

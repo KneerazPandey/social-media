@@ -13,6 +13,7 @@ interface AccessTokenPayload {
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authorization = req.headers.authorization || req.cookies.accessToken;
+
         if (!authorization) {
             throw new UnauthorizedError('Authentication Required');
         }
@@ -24,7 +25,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
         const payload = jwt.verify(token!, Env.SECRET_KEY) as AccessTokenPayload;
 
-        const user = User.findById(payload.userId);
+        const user = await User.findById(payload.userId);
         if (!user) {
             throw new UnauthorizedError('User no longer exists. Please login with your credentials');
         }

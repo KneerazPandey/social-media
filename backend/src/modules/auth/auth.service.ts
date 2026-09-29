@@ -6,10 +6,11 @@ import UnauthorizedError from "../../errors/unauthorize-error.js";
 import PasswordManager from "../../managers/password-manager.js";
 import { CloudinaryProvider, type UploadResult } from "../../utils/cloudinary-provider.js";
 import type { LoginInput, RegisterInput } from "./auth.types.js";
-import User from "./auth.user.models.js";
+import User, { type IUser } from "./auth.user.models.js";
 import Session from "./auth.sessions.models.js";
 import { hashToken } from "../../utils/hash-token.js";
 import Env from "../../config/env.js";
+import { json } from "zod";
 
 
 export default class AuthService {
@@ -148,5 +149,30 @@ export default class AuthService {
         session.revokedAt = new Date();
 
         await session.save();
+    }
+
+    public static async getCurrentuser(user?: IUser): Promise<IUser | undefined> {
+        const currentUser = await User.findById(user?._id);
+        if (!currentUser) {
+            throw new UnauthorizedError('You are not currently login to view your details');
+        }
+        return currentUser;
+    }
+
+    public static async changeCurrentPassword(userId: string, currentPassword: string, newPassword: string) {
+        const user = await User.findById(userId).select('+password');
+        if (!user) {
+            throw new UnauthorizedError('User no longer exists');
+        }
+
+        const isPasswordValid = await PasswordManager.comparePassword(currentPassword, user.password);
+        if (!isPasswordValid) {
+            throw new UnauthorizedError('Current password is incorrect');
+        }
+
+        const hashedPassword = await PasswordManager.hashPassword(newPassword);
+        user.password = hashedPassword;
+
+        await user.save();
     }
 }

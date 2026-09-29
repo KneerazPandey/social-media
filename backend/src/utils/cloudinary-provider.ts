@@ -28,6 +28,38 @@ export class CloudinaryProvider {
         }
     }
 
+    public static async delete(publicId: string): Promise<void> {
+        try {
+            await cloudinary.uploader.destroy(publicId);
+        } catch (error) {
+            throw new UploadError();
+        }
+    }
+
+    public static async deleteByUrl(url: string): Promise<void> {
+        const parts = new URL(url).pathname.split('/');
+
+        const uploadIndex = parts.indexOf('upload');
+
+        if (uploadIndex === -1) {
+            throw new Error('Invalid Cloudinary URL');
+        }
+
+        let publicIdParts = parts.slice(uploadIndex + 1);
+
+        if (/^v\d+$/.test(publicIdParts[0] || '')) {
+            publicIdParts = publicIdParts.slice(1);
+        }
+
+        const publicId = publicIdParts.join('/');
+
+        const lastDot = publicId.lastIndexOf('.');
+        const publicIdWithoutExtension = lastDot === -1 ? publicId : publicId.slice(0, lastDot);
+
+        await cloudinary.uploader.destroy(publicIdWithoutExtension);
+
+    }
+
     public static async bufferUplaod(buffer: Buffer, folderName: string): Promise<UploadResult> {
 
 
