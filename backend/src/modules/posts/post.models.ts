@@ -2,9 +2,9 @@ import mongoose, { Document, Schema } from "mongoose";
 
 
 export interface IPost extends Document {
-    author: mongoose.Schema.Types.ObjectId;
+    author: mongoose.Types.ObjectId;
     content: string;
-    image: string;
+    image?: string;
 }
 
 
@@ -21,9 +21,9 @@ const postSchema = new Schema<IPost>({
     },
     image: {
         type: String,
-        required: true
+        required: false
     }
 }, { timestamps: true });
 
 
-export const PostModel = mongoose.model<IPost>("Post", postSchema);
+export const Post = mongoose.model<IPost>("Post", postSchema);

@@ -6,6 +6,7 @@ import healthRoutes from './modules/health/health.router.js';
 import authRoutes from './modules/auth/auth-router.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import profileRoute from './modules/profile/profile.router.js';
+import postRoutes from './modules/posts/post.router.js';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoute);
+app.use('/api/posts', postRoutes);
 
 app.use(errorMiddleware);
 
