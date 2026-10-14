@@ -1,8 +1,12 @@
+import mongoose from "mongoose";
 import UnauthorizedError from "../../errors/unauthorize-error.js";
 import { CloudinaryProvider } from "../../utils/cloudinary-provider.js";
 import User from "../auth/auth.user.models.js";
 import { Post, type IPost } from "./post.models.js";
-import type { CreatePostInput } from "./post.types.js";
+import type { CreatePostInput, DeletePostInput } from "./post.types.js";
+import BadRequestError from "../../errors/bad-request-error.js";
+import NotFoundError from "../../errors/not-found-error.js";
+import Comment from "../comments/comment.models.js";
 
 
 export default class PostService {
@@ -21,6 +25,39 @@ export default class PostService {
             ...(cloudinaryUploadResponse?.url && { image: cloudinaryUploadResponse.url })
         });
         return post;
+    }
+
+    public static async deletePost(data: DeletePostInput): Promise<void> {
+        if (!mongoose.isValidObjectId(data.postId)) {
+            throw new BadRequestError("Invalid post id");
+        }
+        if (!mongoose.isValidObjectId(data.userId)) {
+            throw new BadRequestError("Invalid user id");
+        }
+
+        const post = await Post.findById(data.postId);
+        if (!post) {
+            throw new NotFoundError('Post not found. Please refresh your page and try again.');
+        }
+
+        if (post.author._id.toString() !== data.userId) {
+            throw new UnauthorizedError("You are not allowed to delete this post");
+        }
+
+        await Comment.deleteMany({
+            post: post._id
+        });
+
+        const postImage = post.image;
+
+        await Post.deleteOne({
+            _id: post._id
+        });
+
+        if (postImage) {
+            CloudinaryProvider.delete(postImage);
+        }
+
     }
 
     public static async getPosts() {

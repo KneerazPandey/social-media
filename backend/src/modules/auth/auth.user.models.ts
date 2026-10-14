@@ -1,6 +1,4 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import JwtToken from "../../config/jwt-token.js";
-import Env from "../../config/env.js";
 
 
 export interface IUser extends Document {
@@ -12,8 +10,8 @@ export interface IUser extends Document {
     createdAt: Date;
     updatedAt: Date;
 
-    generateAccessToken(): Promise<string>;
-    generateRefreshToken(): Promise<string>;
+    followersCount: number;
+    followingCount: number;
 }
 
 
@@ -48,16 +46,19 @@ const userSchema = new Schema<IUser>({
     bio: {
         type: String,
         default: ""
+    },
+    followersCount: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    followingCount: {
+        type: Number,
+        default: 0,
+        min: 0,
     }
 });
 
-userSchema.methods.generateAccessToken = async function (this: IUser): Promise<string> {
-    return await JwtToken.forUser(this, Env.JWT_EXPIRES_IN);
-}
-
-userSchema.methods.generateRefreshToken = async function (this: IUser): Promise<string> {
-    return await JwtToken.forUser(this, Env.JWT_REFRESH_EXPIRES_IN);
-}
 
 const User: Model<IUser> = mongoose.model('User', userSchema);
 export default User;

@@ -7,6 +7,8 @@ import authRoutes from './modules/auth/auth-router.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 import profileRoute from './modules/profile/profile.router.js';
 import postRoutes from './modules/posts/post.router.js';
+import followRouter from './modules/follows/follow.routes.js';
+import commentRoutes from './modules/comments/comment.routes.js';
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoute);
 app.use('/api/posts', postRoutes);
+app.use('/api/comment', commentRoutes);
+app.use('/api/friends', followRouter);
 
 app.use(errorMiddleware);
 

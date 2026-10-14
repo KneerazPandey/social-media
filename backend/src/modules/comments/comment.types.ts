@@ -3,3 +3,8 @@ export interface CreateCommentInput {
     authorId: string;
     content: string;
 }
+
+export interface DeleteCommentInput {
+    authorId: string;
+    commentId: string;
+}

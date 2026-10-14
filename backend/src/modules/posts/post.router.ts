@@ -26,4 +26,10 @@ postRoutes.post(
 
 postRoutes.get('/', authMiddleware, PostContoller.getPosts);
 
+postRoutes.delete(
+    '/:postId/delete/',
+    authMiddleware,
+    PostContoller.deletePost
+);
+
 export default postRoutes;
