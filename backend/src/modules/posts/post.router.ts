@@ -24,12 +24,21 @@ postRoutes.post(
     CommentController.createComment,
 )
 
-postRoutes.get('/', authMiddleware, PostContoller.getPosts);
+postRoutes.get(
+    '/', authMiddleware,
+    PostContoller.getPosts
+);
 
 postRoutes.delete(
     '/:postId/delete/',
     authMiddleware,
     PostContoller.deletePost
 );
+
+postRoutes.patch(
+    '/:postId/update/',
+    authMiddleware,
+    PostContoller.updatePostContent,
+)
 
 export default postRoutes;
